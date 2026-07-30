@@ -1,39 +1,37 @@
-# Discover, book, and attend an event
-End-to-end flow of the event-notify platform: a venue owner lists a space, an organizer books it and publishes an event, a user finds the event, books a ticket, receives notifications, and gets checked in at the entrance. This single flow covers the core value of the platform for all actors.
+# Business use cases
+Core value-delivering flows of the event-notify platform, each complete and valuable on its own.
 ## Actor(s)
-- User (visitor / registered) — searches, books, attends
-- Organizer — finds a venue, publishes and manages the event, validates tickets
-- Venue owner — lists available spaces and confirms venue bookings
-- System — reserves tickets, generates QR codes, sends notifications
-## Trigger / preconditions
-- **Trigger:** A user opens the platform to find an event to attend
-- **Preconditions:** The venue owner has listed an available space; the organizer has a registered account; the user is registered (or registers during the flow)
-## Main flow
-1. Venue owner lists a space on the platform: location, capacity, available dates, rental terms
-2. Organizer browses available venues, selects a suitable space, and sends a booking request for a date
-3. Venue owner confirms the request; system marks the venue as booked for that date
-4. Organizer creates an event in the dashboard (title, description, category, date, venue, ticket count, booking limit) and publishes it
-5. System validates the data and adds the event to the public catalog
-6. User browses the catalog, filters by keyword, category, date, or location
-7. System shows matching events; user opens the event details page
-8. User selects the number of tickets and confirms the booking
-9. System checks availability, reserves the tickets, decreases the available count, and generates a QR code ticket
-10. System sends a booking confirmation notification and shows the booking in the user's dashboard
-11. System sends a reminder notification before the event starts
-12. At the entrance, the user shows the QR code and the organizer scans it
-13. System verifies the ticket (valid, for this event, not used yet) and marks it as checked-in
-14. Organizer admits the user; attendance is recorded in the event statistics
-## Alternate / edge cases
-- **Venue request declined:** Venue owner rejects the booking request; organizer picks another venue or date
-- **Venue date conflict:** System prevents double-booking a venue for the same date
-- **No search results:** System shows an empty state and suggests clearing filters or browsing other categories
-- **Tickets sold out:** Event stays visible but booking is disabled; if tickets sell out during booking, the system rejects it and informs the user
-- **Booking limit exceeded:** System blocks booking more tickets than the organizer's per-user limit
-- **User not logged in:** System redirects to login/registration and returns to the booking afterwards
-- **User cancels the booking:** System releases the tickets back to availability and confirms the cancellation
-- **Organizer edits the event:** System updates the event and notifies all users with active bookings about the change
-- **Organizer cancels the event:** System removes the event from the catalog, cancels all bookings, notifies affected users, and releases the venue date
-- **Notification delivery failure:** System retries; the information stays visible in the user's dashboard
-- **Ticket already used or invalid:** System rejects the scan with a clear reason; organizer can look up the booking manually by name or booking ID
-## Outcome
-The user attended an event they would otherwise have missed; the organizer found a venue and reached an audience without overbooking; the venue owner filled a free date — all through one platform with accurate attendance data.
+- Visitor — a person looking for something to attend; browses the catalog, books tickets, and attends events
+- Organizer — the person or team running an event; lists and manages events, sells tickets, and checks in attendees at the entrance
+- Venue owner — the person or business that owns or manages a physical space; lists available spaces and confirms or declines booking requests from organizers
+- Platform support — event-notify staff who step in when something goes wrong; helps resolve issues outside the normal flow (e.g., a visitor whose ticket didn't arrive, or a disputed check-in at the door)
+
+---
+
+## Book a venue
+**Actors:** Organizer (primary) — books a venue; Venue owner — confirms or declines.
+Organizer requests a venue for a date; venue owner confirms, declines, or the system blocks it if already booked. **Outcome:** organizer has a venue, venue owner fills the date.
+
+## Publish an event
+**Actors:** Organizer (primary) — creates and publishes an event.
+Organizer fills in title, description, category, date, venue, and ticket count; system validates it and lists it in the public catalog, or rejects it with the missing/invalid fields. **Outcome:** the event is discoverable by visitors.
+
+## Discover and book an event
+**Actors:** Visitor (primary) — finds and books an event.
+Visitor searches or filters the catalog, opens an event, and books tickets; system reserves them and issues a QR code, or blocks the booking if tickets are sold out, the limit is exceeded, or the visitor isn't logged in. **Outcome:** visitor holds a valid ticket and gets confirmation/reminder notifications.
+
+## Check in at the entrance
+**Actors:** Organizer (primary) — validates entry; Visitor — presents the ticket.
+Visitor shows their QR code; organizer scans it and the system confirms it's valid, unused, and for this event, or rejects it with a reason if already used or invalid. **Outcome:** attendance is verified and recorded.
+
+## Manage a venue listing
+**Actors:** Venue owner (primary) — lists, edits, or removes a space.
+Venue owner adds a space with location, capacity, available dates, and rental terms, or edits/removes it later; the system blocks removal or date changes that conflict with an already-confirmed booking. **Outcome:** the platform's venue catalog stays accurate and available for organizers to book.
+
+## Resolve a support issue
+**Actors:** Platform support (primary) — investigates and resolves; Visitor or Organizer — reports the issue.
+A visitor or organizer reports a problem outside the normal flow (e.g., a missing ticket notification or a disputed check-in); platform support looks up the booking or event and manually corrects it — reissuing a ticket, reversing a check-in, or restoring a listing. **Outcome:** the reported issue is resolved without the affected user losing access.
+
+## Submit platform feedback
+**Actors:** Organizer (primary) — submits feedback.
+Organizer sends a feature request or issue report through the feedback channel; the system records it and confirms receipt. **Outcome:** the platform has visibility into what organizers need next.
