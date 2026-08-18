@@ -3,9 +3,9 @@
 Zooms into event-notify to show its major deployable pieces (containers), and how they communicate.
 
 ```mermaid
-flowchart LR
+flowchart TB
  subgraph boundary["event-notify — functional decomposition"]
-    direction LR
+    direction TB
         catalog["<b>Catalog & Search</b><br><i>Functional container</i><br>Lets visitors browse,<br>search, and filter events"]
         eventMgmt["<b>Event Management</b><br><i>Functional container</i><br>Organizers create, edit,<br>and publish events"]
         venueDirectory["<b>Venue Directory</b><br><i>Functional container</i><br>Venue owners list, edit,<br>and remove spaces"]
@@ -38,7 +38,6 @@ flowchart LR
     supportPerson -. Elevated: reverses a check-in .-> checkin
     supportPerson -. Elevated: restores a listing .-> eventMgmt
     identity -.Authorizes.-> ticketBooking
-    identity -.Grants elevated access.-> supportPerson
 
     notifications -- Sends emails via --> emailProvider["<b>Email provider</b><br><i>External System</i>"]
     notifications -- Sends texts via --> smsProvider["<b>SMS provider</b><br><i>External System</i>"]
@@ -66,3 +65,5 @@ flowchart LR
     classDef shared fill:#6b8fb5,stroke:#4a6e95,color:#fff
     classDef external fill:#999999,stroke:#6b6b6b,color:#fff
 ```
+
+Support doesn't have its own copy of "reissue a ticket" or "reverse a check-in" — those corrections happen directly in the container that already owns the data, gated by Identity & Access granting Platform support elevated permission. Support & Case Management itself only tracks that an issue was reported and how it was resolved.
