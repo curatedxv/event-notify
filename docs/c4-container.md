@@ -2,10 +2,15 @@
 
 Zooms into event-notify to show its major deployable pieces (containers), and how they communicate.
 
+![C4 container diagram — functional decomposition of event-notify into Catalog & Search, Event Management, Venue Directory, Venue Booking, Ticket Booking, Check-in, Notifications, Support & Case Management, Feedback, and Identity & Access](c4-container.png)
+
+
+<details>
+<summary>Mermaid source</summary>
+
 ```mermaid
 flowchart LR
  subgraph boundary["event-notify — functional decomposition"]
-    direction LR
         catalog["<b>Catalog & Search</b><br><i>Functional container</i><br>Lets visitors browse,<br>search, and filter events"]
         eventMgmt["<b>Event Management</b><br><i>Functional container</i><br>Organizers create, edit,<br>and publish events"]
         venueDirectory["<b>Venue Directory</b><br><i>Functional container</i><br>Venue owners list, edit,<br>and remove spaces"]
@@ -38,7 +43,6 @@ flowchart LR
     supportPerson -. Elevated: reverses a check-in .-> checkin
     supportPerson -. Elevated: restores a listing .-> eventMgmt
     identity -.Authorizes.-> ticketBooking
-    identity -.Grants elevated access.-> supportPerson
 
     notifications -- Sends emails via --> emailProvider["<b>Email provider</b><br><i>External System</i>"]
     notifications -- Sends texts via --> smsProvider["<b>SMS provider</b><br><i>External System</i>"]
@@ -66,3 +70,5 @@ flowchart LR
     classDef shared fill:#6b8fb5,stroke:#4a6e95,color:#fff
     classDef external fill:#999999,stroke:#6b6b6b,color:#fff
 ```
+
+</details>
