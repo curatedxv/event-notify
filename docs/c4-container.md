@@ -1,68 +1,52 @@
 # C4: Container
 
-Zooms into event-notify to show its major deployable pieces (containers), and how they communicate.
+Zooms into event-notify to show its domain containers and how they communicate.
+Each container owns a whole domain; its functions are shown one level down, at the
+component level.
 
-![C4 container diagram — functional decomposition of event-notify into Catalog & Search, Event Management, Venue Directory, Venue Booking, Ticket Booking, Check-in, Notifications, Support & Case Management, Feedback, and Identity & Access](c4-container.png)
+![C4 container diagram — event-notify decomposed into five domain containers: Venues, Events & Discovery, Ticketing & Admission, Notifications, and Identity & Access](c4-container.png)
 
+> The `c4-container.png` bitmap is regenerated from the Mermaid source below.
 
 <details>
 <summary>Mermaid source</summary>
 
 ```mermaid
 flowchart LR
- subgraph boundary["event-notify — functional decomposition"]
-        catalog["<b>Catalog & Search</b><br><i>Functional container</i><br>Lets visitors browse,<br>search, and filter events"]
-        eventMgmt["<b>Event Management</b><br><i>Functional container</i><br>Organizers create, edit,<br>and publish events"]
-        venueDirectory["<b>Venue Directory</b><br><i>Functional container</i><br>Venue owners list, edit,<br>and remove spaces"]
-        venueBooking["<b>Venue Booking</b><br><i>Functional container</i><br>Organizers request venues;<br>owners confirm or decline"]
-        ticketBooking["<b>Ticket Booking</b><br><i>Functional container</i><br>Reserves tickets, issues<br>QR codes, enforces limits"]
-        checkin["<b>Check-in</b><br><i>Functional container</i><br>Validates QR codes and<br>records attendance"]
-        notifications["<b>Notifications</b><br><i>Functional container</i><br>Sends confirmations,<br>reminders, cancellations"]
-        caseMgmt["<b>Support & Case Management</b><br><i>Functional container</i><br>Tracks reported issues<br>and their resolution"]
-        feedback["<b>Feedback</b><br><i>Functional container</i><br>Collects organizer<br>feature requests & issues"]
-        identity["<b>Identity & Access</b><br><i>Shared functional container</i><br>Authenticates actors,<br>authorizes actions"]
+ subgraph boundary["event-notify — domain containers"]
+        venues["<b>Venues</b><br><i>Domain container</i><br>Venue listings and the<br>booking handshake between<br>organizers and owners"]
+        events["<b>Events &amp; Discovery</b><br><i>Domain container</i><br>Event lifecycle — create,<br>edit, publish — plus the<br>public catalog, search,<br>and filtering"]
+        ticketing["<b>Ticketing &amp; Admission</b><br><i>Domain container</i><br>Ticket reservations, QR<br>issuance, per-event limits,<br>and check-in at the door"]
+        notifications["<b>Notifications</b><br><i>Domain container</i><br>Confirmations, reminders,<br>and cancellations over<br>email and SMS"]
+        identity["<b>Identity &amp; Access</b><br><i>Shared domain container</i><br>Authenticates actors,<br>authorizes domain actions,<br>manages accounts and roles"]
  end
-    visitor(["<b>Visitor</b>"]) -- Searches, browses --> catalog
-    visitor -- Books tickets --> ticketBooking
-    organizer(["<b>Organizer</b>"]) -- Publishes, edits --> eventMgmt
-    organizer -- Requests a venue --> venueBooking
-    organizer -- Scans tickets --> checkin
-    organizer -- Submits feedback --> feedback
-    venueOwner(["<b>Venue owner</b>"]) -- Confirms, declines --> venueBooking
-    venueOwner -- Lists, edits venues --> venueDirectory
-    supportPerson(["<b>Platform support</b>"]) -- Investigates, corrects --> caseMgmt
+    venueOwner(["<b>Venue owner</b>"]) -- Lists venues; confirms or declines --> venues
+    organizer(["<b>Organizer</b>"]) -- Requests a venue --> venues
+    organizer -- Publishes, edits events --> events
+    organizer -- Scans tickets at the door --> ticketing
+    visitor(["<b>Visitor</b>"]) -- Searches, browses --> events
+    visitor -- Books tickets --> ticketing
+    support(["<b>Platform support</b>"]) -- Enables and disables user accounts --> identity
 
-    eventMgmt -- Publishes listing to --> catalog
-    venueBooking -- Checks availability against --> venueDirectory
-    venueBooking -- Confirmed venue & date --> eventMgmt
-    catalog -- Event & capacity data --> ticketBooking
-    ticketBooking -- Booking made / cancelled --> notifications
-    eventMgmt -- Event changed / cancelled --> notifications
-    ticketBooking -- Ticket & booking records --> checkin
-    supportPerson -. Elevated: reissues, adjusts .-> ticketBooking
-    supportPerson -. Elevated: reverses a check-in .-> checkin
-    supportPerson -. Elevated: restores a listing .-> eventMgmt
-    identity -.Authorizes.-> ticketBooking
+    venues -- Confirmed venue &amp; date --> events
+    events -- Event &amp; capacity data --> ticketing
+    events -- Event changed / cancelled --> notifications
+    ticketing -- Booking made / cancelled --> notifications
 
     notifications -- Sends emails via --> emailProvider["<b>Email provider</b><br><i>External System</i>"]
     notifications -- Sends texts via --> smsProvider["<b>SMS provider</b><br><i>External System</i>"]
 
     emailProvider@{ shape: rounded}
     smsProvider@{ shape: rounded}
-     catalog:::container
-     eventMgmt:::container
-     venueDirectory:::container
-     venueBooking:::container
-     ticketBooking:::container
-     checkin:::container
+     venues:::container
+     events:::container
+     ticketing:::container
      notifications:::container
-     caseMgmt:::container
-     feedback:::container
      identity:::shared
      visitor:::person
      organizer:::person
      venueOwner:::person
-     supportPerson:::person
+     support:::person
      emailProvider:::external
      smsProvider:::external
     classDef person fill:#08427b,stroke:#052e56,color:#fff
